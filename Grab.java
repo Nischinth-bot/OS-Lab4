@@ -37,7 +37,7 @@ class Grab
         if (args[0].equals("clean")) 
         {
             //don't let the downloads directory be named clean
-            System.out.println("Provide the name of the downloads directory.");
+            System.out.println("Error: provide the name of the downloads directory.");
             printUsage();
         }
         downloadDir = args[0];
@@ -108,7 +108,7 @@ class Grab
     //called when program is not able to create downloads directory
     private void badDirectory()
     {
-        System.out.println("Unable to create download directory: " 
+        System.out.println("Error: unable to create download directory: " 
                            + downloadDir);
         printUsage(); 
     }
