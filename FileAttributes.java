@@ -5,6 +5,7 @@ class FileAttributes
     private String downloadDir;     //destination download directory
     private String fileName;        //destination file
     private long downloadAmt;       //amount downloaded
+    private String threadName;
     //constructor
     FileAttributes(String filePath, String downloadDir)
     {
@@ -12,6 +13,7 @@ class FileAttributes
         this.downloadAmt = 0;
         this.filePath = filePath;
         this.fileName = initFileName(filePath);
+        this.threadName = "(No Thread)";
     }
 
     //strip off the piece after the right most / and use that
@@ -57,8 +59,13 @@ class FileAttributes
         return downloadAmt;
     }
 
+    public void setThreadName(String s)
+    {
+        this.threadName = s;
+    }
+
     public String getThreadName()
     {
-        return Thread.currentThread().getName();
-        }
+        return this.threadName;
+    }
 }

@@ -18,13 +18,13 @@ class Downloader extends Thread //Makes Downloader a subclass of Thread
     public void doDownloads()
     {
         //get attributes of next file from File Manager.
-        //This statement is synchronized on lock1
-      
+        //This statement is synchronized because we want each thread to access a different file 
         FileAttributes fileAttrs;
         synchronized(this){ fileAttrs = fm.getNextFile(); }
         while (fileAttrs != null)
         {
             //go the download
+            fileAttrs.setThreadName(Thread.currentThread().getName());
            downloadFile(fileAttrs); 
            synchronized(this){ fileAttrs = fm.getNextFile(); }  //Threads will synchronize on which file to get. 
         }
