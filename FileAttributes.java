@@ -5,7 +5,6 @@ class FileAttributes
     private String downloadDir;     //destination download directory
     private String fileName;        //destination file
     private long downloadAmt;       //amount downloaded
-
     //constructor
     FileAttributes(String filePath, String downloadDir)
     {
@@ -57,4 +56,9 @@ class FileAttributes
     {
         return downloadAmt;
     }
+
+    public String getThreadName()
+    {
+        return Thread.currentThread().getName();
+        }
 }

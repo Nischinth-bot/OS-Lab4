@@ -6,6 +6,7 @@ class Grab
 {
     boolean cleanOnly;   //true if only cleaning up a downloads directory
     String downloadDir;  //destination directory for the downloads
+    int numThreads = 0;
 
     //control starts here
     public static void main(String args[])
@@ -21,7 +22,7 @@ class Grab
         //report the amount of time it took to do all of the downloads
         long endTime = System.currentTimeMillis();
         System.out.println("Total execution time (ms): " + 
-                           (endTime - startTime));
+                (endTime - startTime));
     }
 
     //constructor
@@ -41,6 +42,7 @@ class Grab
             printUsage();
         }
         downloadDir = args[0];
+        if(args.length == 2) { numThreads = Integer.parseInt(args[1]); }
         if (args.length > 1 && args[1].equals("clean")) cleanOnly = true;
     }
 
@@ -53,15 +55,25 @@ class Grab
         cleanUp(downloadDir);
         if (cleanOnly == false)
         {
-         
+
             //FileManager object provides the attributes of each file to download
             FileManager fm = new FileManager(downloadDir);
             //Downloader object performs the downloads, getting the attributes of
             //each file from the FileManager
             Downloader dl = new Downloader(fm);
+            
+            if(numThreads > 1 ) { //Starting new threads that all share the same Downloader and FileManager objects.
+                for(int i = 0; i < numThreads; i ++){
+                    new Thread(dl).start();
+                    try{Thread.sleep(1000);} catch (InterruptedException e) {return;}
+                    fm.printUpdate();
+                }
+                fm.printUpdate();
+                return;
+            }
             dl.doDownloads();
+            fm.printUpdate(); 
             //print the result of the download
-            fm.printUpdate();
         } else
         {
             //if clean option used, print message and exit
@@ -104,12 +116,12 @@ class Grab
             badDirectory();
         }
     }
-   
+
     //called when program is not able to create downloads directory
     private void badDirectory()
     {
         System.out.println("error: unable to create download directory: " 
-                           + downloadDir);
+                + downloadDir);
         printUsage(); 
     }
 

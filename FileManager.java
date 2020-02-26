@@ -62,7 +62,7 @@ class FileManager
         System.out.print("\033[H\033[2J");
         for (i = 0; i < fileAttrsArr.length; i++)
         {
-            System.out.println(fileAttrsArr[i].getFileName() + ": " +
+            System.out.println(fileAttrsArr[i].getThreadName() + " " + fileAttrsArr[i].getFileName() + ": " +
                                fileAttrsArr[i].getDownloadAmount());
         }
         System.out.println("Total download: " + totalDownload);
