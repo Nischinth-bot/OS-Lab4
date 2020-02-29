@@ -8,7 +8,7 @@ class Downloader extends Thread //Makes Downloader a subclass of Thread
     private FileManager fm;
     //download file chunkSize bytes at a time
     private final int chunkSize = 1024;
-     //constructor
+    //constructor
     Downloader(FileManager fm)
     {
         this.fm = fm;
@@ -20,13 +20,13 @@ class Downloader extends Thread //Makes Downloader a subclass of Thread
         //get attributes of next file from File Manager.
         //This statement is synchronized because we want each thread to access a different file 
         FileAttributes fileAttrs;
-        synchronized(this){ fileAttrs = fm.getNextFile(); }
+        synchronized(this){ fileAttrs = fm.getNextFile();}
         while (fileAttrs != null)
         {
-            //go the download
-            fileAttrs.setThreadName(Thread.currentThread().getName());
-           downloadFile(fileAttrs); 
-           synchronized(this){ fileAttrs = fm.getNextFile(); }  //Threads will synchronize on which file to get. 
+        //    System.out.println(Thread.currentThread().getName() + " " + fileAttrs.getFileName());
+            fileAttrs.setThreadName(Thread.currentThread().getName()); // set Thread name for the file attribute
+            downloadFile(fileAttrs);  //go the download
+            synchronized(this){ fileAttrs = fm.getNextFile(); }  //Threads will synchronize on which file to get. 
         }
     }
 
@@ -52,10 +52,13 @@ class Downloader extends Thread //Makes Downloader a subclass of Thread
             {
                 //write the chunk read to the destination
                 fileOutputStream.write(dataBuffer, 0, bytesRead);
-                //update the downloaded amount that is maintained in the File Attributes
-                fileAttrs.updateDownload(bytesRead);
-                //update the total download amount that is maintained by the File Manager
-                fm.updateTotalDownload(bytesRead);
+                
+                //The code below is synchronized so that different threads do not attempt to update File Manager
+                //info at the same time, which might lead to misreading.        
+                synchronized(this) { 
+                    fileAttrs.updateDownload(bytesRead); //update the downloaded amount that is maintained in the File Attributes
+                    fm.updateTotalDownload(bytesRead); //update the total download amount that is maintained by the File Manager
+                }
             }
         } catch (IOException e) 
         {

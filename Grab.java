@@ -61,12 +61,15 @@ class Grab
             //Downloader object performs the downloads, getting the attributes of
             //each file from the FileManager
             Downloader dl = new Downloader(fm);
-            
+
             if(numThreads > 1 ) { //Starting new threads that all share the same Downloader and FileManager objects.
                 for(int i = 0; i < numThreads; i ++){
                     new Thread(dl).start();
-                    try{Thread.sleep(1000);} catch (InterruptedException e) {return;}
+                }
+                while(fm.getNextFile() != null){
+
                     fm.printUpdate();
+                    try{Thread.sleep(2000);} catch (InterruptedException e) {}
                 }
                 fm.printUpdate();
                 return;
